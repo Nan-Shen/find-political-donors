@@ -26,21 +26,21 @@ Each line of this file should contain these fields:
 
 # Dependencies and Run instructions
 
-Only tested on python 2.7 default packages.
+Only tested on python 2.7. Packages required: sys, os, datetime, numpy.
 
 This script checks existence of output files to avoid overwrite. Please remove previous outputs or change their names before run this script.
 
 ## Test details(Optional)
 
-1. small scale test file, general purpose test.
+1. small scale test file, test if script gives median or mean.
 
-2. this test file tests check_format function. The 6th line in the input file is not in the standard FEC format. The script should stop here.
+2. this test file tests check_format function. The 2th line in the input file is not in the standard FEC format. The script should stop here.
 
 3. this test file tests check_line function. The first three transactions has non-empty OTHER_ID, malformated donation amount and missing recipient ID respectively. These transactions should be skipped by both output files.
 
 4. this test file tests check_line_zip function. The 2nd transaction zip code is 4-digit long, invalid. This transaction should be skipped in zip code file, medianvals_by_zip.txt. But this transaction should be kept in date file, medianvals_by_date.txt.
 
-5. this test file tests check_line_date function. The 1st transaction date is malformed, invalid. This transaction should be skipped by date file, medianvals_by_date.txt. But this transaction should be kept in zip file, medianvals_by_zip.txt.
+5. this test file tests check_line_date function. The first three transaction date are malformed, invalid. These transactions should be skipped by date file, medianvals_by_date.txt. But these transactions should be kept in zip file, medianvals_by_zip.txt.
 
 6. this test file tests update_zipDic function. The 1st and 2nd transactions were from the same zip code. And the 3rd and 4th transactions were from another zip code. medianvals_by_zip.txt should show the real-time update and merge of donations from one zip code.
 

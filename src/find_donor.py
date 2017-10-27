@@ -35,6 +35,7 @@ a recipient. It will generate two output files:
 import sys
 from os.path import isfile
 from datetime import datetime
+from numpy import median
 
 def find_donor():
     """main function: parse arguments, check if output files exist and finally 
@@ -114,8 +115,8 @@ def check_format(fields, num=21):
         if len(fields) != num:
             raise ValueError('Wrong input format')
     except ValueError:
-        sys.stderr.write('This is not a standard FEC database file. Please check!')
-        exit
+        sys.stderr.write('This is not a standard FEC database file. Please check!\n')
+        sys.exit(0)
 
 
 def check_line(cmteID, amt, otherID):
@@ -178,15 +179,18 @@ def update_zipDic(cmteID, zipCode, amt, zipDic):
     zipcode = zipCode[:5]
     amt = float(amt)
     if zipDic.get((cmteID, zipcode)):
-        Median, num, total = zipDic[(cmteID, zipcode)]
+        amts, num, total = zipDic[(cmteID, zipcode)]
         num +=1
         total += amt
-        Median = round(total / num, 0)
-        zipDic[(cmteID, zipcode)] = [Median, num, total]
+        amts.append(amt)
+        zipDic[(cmteID, zipcode)] = [amts, num, total]
     else:
-        zipDic[(cmteID, zipcode)] = [amt, 1, amt]
-    zipline = '%s|%s|%d|%d|%d\n' % (cmteID, zipcode, 
-                                    zipDic[(cmteID, zipcode)][0], 
+        zipDic[(cmteID, zipcode)] = [[amt], 1, amt]
+    amts, num, total = zipDic[(cmteID, zipcode)]
+    Median = round(median(amts), 0)
+    zipline = '%s|%s|%d|%d|%d\n' % (cmteID, 
+                                    zipcode, 
+                                    Median, 
                                     zipDic[(cmteID, zipcode)][1], 
                                     zipDic[(cmteID, zipcode)][2])
     return zipline
@@ -214,13 +218,13 @@ def update_dtDic(cmteID, date, amt, dtDic):
     dt = datetime.strptime(date, '%m%d%Y')
     amt = float(amt)
     if dtDic.get((cmteID, dt)):
-        Median, num, total = dtDic[(cmteID, dt)]
+        amts, num, total = dtDic[(cmteID, dt)]
         num +=1
         total += amt
-        Median = round(total / num, 0)
-        dtDic[(cmteID, dt)] = [Median, num, total]
+        amts.append(amt)
+        dtDic[(cmteID, dt)] = [amts, num, total]
     else:
-        dtDic[(cmteID, dt)] = [amt, 1, amt]
+        dtDic[(cmteID, dt)] = [[amt], 1, amt]
 
 def write_dtDic(dtDic, out2):
     """When read in input file is finished, sort date Dic by recipient ID and
@@ -231,9 +235,10 @@ def write_dtDic(dtDic, out2):
     """ 
     f = open(out2, 'w')
     for key in sorted(dtDic.iterkeys()):
+        Median = round(median(dtDic[key][0]), 0)
         f.write('%s|%s|%d|%d|%d\n' % (key[0], 
                                        datetime.strftime(key[1],'%m%d%Y'), 
-                                       dtDic[key][0], 
+                                       Median, 
                                        dtDic[key][1], 
                                        dtDic[key][2]))
     f.close()
@@ -246,8 +251,8 @@ def check_fp(out_fp):
         if isfile(out_fp):
             raise OSError('Output file exists')
     except OSError:
-        sys.stderr.write('Output file \"%s\" already exists.' % (out_fp))
-        exit
+        sys.stderr.write('Output file \"%s\" already exists.\n' % (out_fp))
+        sys.exit(0)
     
 if __name__ == "__main__":
      find_donor() 

@@ -59,9 +59,12 @@ function compare_outputs {
   OUTPUT_FILENAME=medianvals_by_zip.txt
   PROJECT_ANSWER_PATH1=${GRADER_ROOT}/temp/output/${OUTPUT_FILENAME}
   TEST_ANSWER_PATH1=${GRADER_ROOT}/tests/${test_folder}/output/${OUTPUT_FILENAME}
-   
-  DIFF_RESULT1=$(diff -bB ${PROJECT_ANSWER_PATH1} ${TEST_ANSWER_PATH1} | wc -l)
-  if [ "${DIFF_RESULT1}" -eq "0" ] && [ -f ${PROJECT_ANSWER_PATH1} ]; then
+  
+  if [ -f ${PROJECT_ANSWER_PATH1} ] && [ -f ${PROJECT_ANSWER_PATH1} ];then 
+    DIFF_RESULT1=$(diff -bB ${PROJECT_ANSWER_PATH1} ${TEST_ANSWER_PATH1} | wc -l)
+  fi
+
+  if ([ ! -f ${PROJECT_ANSWER_PATH1} ] && [ ! -f ${PROJECT_ANSWER_PATH1} ]) || ([ "${DIFF_RESULT1}" -eq "0" ] && [ -f ${PROJECT_ANSWER_PATH1} ]); then
     echo -e "[${color_green}PASS${color_norm}]: ${test_folder} ${OUTPUT_FILENAME}"
     NUM_OUTPUT_FILES_PASSED=$(($NUM_OUTPUT_FILES_PASSED+1))
   else
@@ -73,8 +76,11 @@ function compare_outputs {
   PROJECT_ANSWER_PATH2=${GRADER_ROOT}/temp/output/${OUTPUT_FILENAME}
   TEST_ANSWER_PATH2=${GRADER_ROOT}/tests/${test_folder}/output/${OUTPUT_FILENAME}
   
-  DIFF_RESULT2=$(diff -bB ${PROJECT_ANSWER_PATH2} ${TEST_ANSWER_PATH2} | wc -l)
-  if [ "${DIFF_RESULT2}" -eq "0" ] && [ -f ${PROJECT_ANSWER_PATH2} ]; then
+  if [ -f ${PROJECT_ANSWER_PATH2} ] && [ -f ${PROJECT_ANSWER_PATH2} ];then 
+    DIFF_RESULT2=$(diff -bB ${PROJECT_ANSWER_PATH2} ${TEST_ANSWER_PATH2} | wc -l)
+  fi
+
+  if ([ ! -f ${PROJECT_ANSWER_PATH2} ] && [ ! -f ${PROJECT_ANSWER_PATH2} ]) || ([ "${DIFF_RESULT2}" -eq "0" ] && [ -f ${PROJECT_ANSWER_PATH2} ]); then
     echo -e "[${color_green}PASS${color_norm}]: ${test_folder} ${OUTPUT_FILENAME}"
     NUM_OUTPUT_FILES_PASSED=$(($NUM_OUTPUT_FILES_PASSED+1))
   else
